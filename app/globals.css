@@ -1,0 +1,89 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --paper: #f4efe5;
+  --ink: #18221f;
+  --pine: #184b3c;
+  --vermilion: #c85136;
+  --mustard: #d5a33d;
+  --fog: #d9d6cc;
+}
+
+* { box-sizing: border-box; }
+html { min-width: 320px; background: var(--paper); }
+body {
+  margin: 0;
+  background: var(--paper);
+  color: var(--ink);
+  font-family: 'Space Grotesk', system-ui, sans-serif;
+  overflow-x: hidden;
+}
+
+button, a { -webkit-tap-highlight-color: transparent; }
+button { font: inherit; }
+
+::selection { background: var(--mustard); color: var(--ink); }
+
+.file-grid {
+  background-image: linear-gradient(rgba(24,34,31,.055) 1px, transparent 1px), linear-gradient(90deg, rgba(24,34,31,.055) 1px, transparent 1px);
+  background-size: 24px 24px;
+}
+
+.paper-noise {
+  position: relative;
+}
+
+.paper-noise::before {
+  content: '';
+  pointer-events: none;
+  position: absolute;
+  inset: 0;
+  opacity: .18;
+  mix-blend-mode: multiply;
+  background-image: radial-gradient(rgba(24,34,31,.22) .5px, transparent .5px);
+  background-size: 5px 5px;
+}
+
+.stamp {
+  border: 2px solid currentColor;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 28px;
+  padding: 2px 9px;
+  transform: rotate(-2deg);
+  letter-spacing: .12em;
+  text-transform: uppercase;
+  font: 700 11px/1 'IBM Plex Mono', monospace;
+}
+
+.stamp-red { color: var(--vermilion); }
+.stamp-green { color: var(--pine); }
+
+.barcode {
+  height: 28px;
+  width: 100px;
+  background: repeating-linear-gradient(90deg, var(--ink) 0 2px, transparent 2px 4px, var(--ink) 4px 5px, transparent 5px 8px);
+}
+
+.rule { border-top: 1px solid rgba(24,34,31,.28); }
+
+@keyframes reveal-in {
+  from { opacity: 0; transform: translateY(14px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.reveal-in { animation: reveal-in .5s ease both; }
+
+@keyframes scan {
+  0%, 100% { transform: translateY(-12px); opacity: .35; }
+  50% { transform: translateY(12px); opacity: 1; }
+}
+
+.scan-line { animation: scan 1.25s ease-in-out infinite; }
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { animation-duration: .01ms !important; animation-iteration-count: 1 !important; scroll-behavior: auto !important; }
+}

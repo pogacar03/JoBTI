@@ -1,0 +1,11 @@
+node_modules/
+.next/
+out/
+coverage/
+playwright-report/
+test-results/
+*.png
+*.tsbuildinfo
+.DS_Store
+.vercel
+.env*
