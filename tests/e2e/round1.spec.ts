@@ -40,6 +40,14 @@ test('home headline describes the result as a personality', async ({ page }) => 
   await expect(page.getByRole('heading', { name: /什么东西/ })).toHaveCount(0);
 });
 
+test('mobile homepage fits the primary intake view without vertical scrolling', async ({ page }) => {
+  await page.setViewportSize({ width: 390, height: 844 });
+  await page.goto('/');
+  await expect(page.getByRole('link', { name: /开始秋招精神鉴定/ })).toBeVisible();
+  await expect(page.locator('[data-personality-image]')).toBeVisible();
+  expect(await page.evaluate(() => document.documentElement.scrollHeight)).toBeLessThanOrEqual(846);
+});
+
 test('downloaded poster is a non-empty 1080×1920 PNG', async ({ page }) => {
   await seedCompleteState(page);
   const downloadEvent = page.waitForEvent('download');
