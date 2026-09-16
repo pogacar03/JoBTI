@@ -1,4 +1,4 @@
-import type { DimensionScores, Question, QuestionOption } from '@/lib/scoring/types';
+import type { DimensionScores, HiddenQuestion, Question, QuestionOption } from '@/lib/scoring/types';
 
 const zeroDelta: Partial<DimensionScores> = {};
 
@@ -301,3 +301,45 @@ export const QUESTIONS: Question[] = [
 ];
 
 export const TOTAL_QUIZ_QUESTIONS = QUESTIONS.length;
+
+const hasAnyAnswer = (answers: Record<string, string>, ids: string[]): boolean => ids.includes(answers.q05) || ids.includes(answers.q18) || ids.includes(answers.q28);
+
+export const HIDDEN_QUESTIONS: HiddenQuestion[] = [
+  {
+    id: 'x-status', number: 31, hidden: true, eyebrow: '隐藏支线 / STATUS-01',
+    prompt: '招聘网站连续三天没动静，你会怎么处理？',
+    unlockWhen: (answers) => hasAnyAnswer(answers, ['q05-c', 'q18-c', 'q28-c']),
+    options: [
+      option('x-status-a', '先去做下一件能推进的事', { W: 2, S: 1 }, { HR_KEEP_WARM: 1 }),
+      option('x-status-b', '把流程节点重新查一遍', { A: 2, I: 1 }, { STATUS_CHECK: 2 }),
+      option('x-status-c', '每隔十分钟刷新一次', { A: 3, F: 1 }, { OC_HYPERVIGILANCE: 2, STATUS_CHECK: 1 }),
+      option('x-status-d', '找人问问是不是系统漏了我', { I: 3 }, { INFO_HUNT: 2 }),
+    ],
+  },
+  {
+    id: 'x-dream', number: 32, hidden: true, eyebrow: '隐藏支线 / DREAM-02',
+    prompt: '梦司突然开放一个新岗位，你的第一反应是？',
+    unlockWhen: (answers) => ['q02-d'].includes(answers.q02) || ['q17-c'].includes(answers.q17),
+    options: [
+      option('x-dream-a', '立刻打开简历开始改', { D: 3 }, { DREAM_COMPANY: 2 }),
+      option('x-dream-b', '想想这个岗位能不能成为跳板', { D: 2, P: 1 }, { ROLE_JUMP: 2 }),
+      option('x-dream-c', '先想象入职第一天的工位', { A: 2, M: 1 }, { DREAM_COMPANY: 1, PREMATURE_OC: 1 }),
+      option('x-dream-d', '先把手里的保底捏紧一点', { S: 2, W: 1 }, { HOLD_OFFER: 1 }),
+    ],
+  },
+  {
+    id: 'x-ritual', number: 33, hidden: true, eyebrow: '隐藏支线 / RITUAL-03',
+    prompt: '面试前十分钟，你突然觉得今天的气场不对，会？',
+    unlockWhen: (answers) => ['q13-c', 'q21-d', 'q30-d'].includes(answers.q13) || ['q13-c', 'q21-d', 'q30-d'].includes(answers.q21) || ['q13-c', 'q21-d', 'q30-d'].includes(answers.q30),
+    options: [
+      option('x-ritual-a', '换上那件上次有好消息的衣服', { M: 3 }, { SUPERSTITION: 2 }),
+      option('x-ritual-b', '深呼吸，按准备好的节奏来', { S: 2, W: 1 }),
+      option('x-ritual-c', '给朋友发一句“稳住我”', { A: 2, F: 1 }, { COMPARISON: 1 }),
+      option('x-ritual-d', '查一下今天适合面试的颜色', { I: 2, M: 1 }, { SUPERSTITION: 1, INFO_HUNT: 1 }),
+    ],
+  },
+];
+
+export function getUnlockedHiddenQuestions(answers: Record<string, string>): HiddenQuestion[] {
+  return HIDDEN_QUESTIONS.filter((question) => question.unlockWhen(answers));
+}

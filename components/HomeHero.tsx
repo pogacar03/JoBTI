@@ -70,8 +70,9 @@ export function HomeHero({ initialOrder }: HomeHeroProps) {
             <p className="font-mono text-[11px] uppercase tracking-[.22em] text-ink/60">Candidate intake / 2027</p>
             <h1 className="mt-2 text-3xl font-bold tracking-[-.08em] sm:text-4xl">JOBTI<span className="text-vermilion">.</span></h1>
           </div>
-          <div className="text-right font-mono text-[10px] uppercase leading-5 text-ink/60">
-            <div>confidential</div><div>case no. 27-0915</div>
+          <div className="flex items-start gap-3 text-right font-mono text-[10px] uppercase leading-5 text-ink/60">
+            <Link data-gallery-link href="/gallery" className="text-vermilion underline underline-offset-2 focus:outline-none focus:ring-4 focus:ring-mustard">人物图鉴</Link>
+            <div><div>confidential</div><div>case no. 27-0915</div></div>
           </div>
         </header>
 

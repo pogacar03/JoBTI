@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { QUESTIONS } from '@/data/questions';
+import { getUnlockedHiddenQuestions, QUESTIONS } from '@/data/questions';
 import {
   QUIZ_STORAGE_KEY,
   QuizStateSchema,
@@ -72,6 +72,17 @@ describe('quiz state persistence', () => {
     const { q30: _missing, ...missingLastAnswer } = answers;
     expect(isQuizComplete({ version: 1, answers: missingLastAnswer, complete: true })).toBe(false);
     expect(isQuizComplete({ version: 1, answers: { ...answers, q01: 'not-a-real-option' }, complete: true })).toBe(false);
+  });
+
+  it('keeps unlocked hidden branches optional for persisted mainline results', () => {
+    const answers = legalAnswers();
+    answers.q05 = 'q05-c';
+    answers.q30 = 'q30-a';
+    expect(getUnlockedHiddenQuestions(answers).length).toBeGreaterThan(0);
+    expect(isQuizComplete({ version: 1, answers, complete: true })).toBe(true);
+
+    for (const question of getUnlockedHiddenQuestions(answers)) answers[question.id] = question.options[0].id;
+    expect(isQuizComplete({ version: 1, answers, complete: true })).toBe(true);
   });
 
   it('restores the newest valid record when session and local storage diverge', () => {

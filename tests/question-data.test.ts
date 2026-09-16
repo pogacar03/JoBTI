@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { PROGRESS_OPTIONS, QUESTIONS, START_OPTIONS } from '@/data/questions';
+import { getUnlockedHiddenQuestions, HIDDEN_QUESTIONS, PROGRESS_OPTIONS, QUESTIONS, START_OPTIONS } from '@/data/questions';
 import { aggregateAnswers } from '@/lib/scoring/answers';
 
 describe('default v1 question data', () => {
@@ -27,5 +27,12 @@ describe('default v1 question data', () => {
     }
     expect((assessment.tags.SIGNED ?? 0)).toBeGreaterThan(0);
     expect((assessment.tags.LATE_START ?? 0)).toBeGreaterThan(0);
+  });
+
+  it('keeps hidden branches optional and unlocks them from specific answer patterns', () => {
+    expect(HIDDEN_QUESTIONS.length).toBeGreaterThanOrEqual(3);
+    expect(getUnlockedHiddenQuestions({ q05: 'q05-c' }).some((question) => question.id === 'x-status')).toBe(true);
+    expect(getUnlockedHiddenQuestions({ q05: 'q05-a' }).some((question) => question.id === 'x-status')).toBe(false);
+    for (const question of HIDDEN_QUESTIONS) expect(question.options).toHaveLength(4);
   });
 });

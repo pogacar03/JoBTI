@@ -1,4 +1,4 @@
-import { PROGRESS_OPTIONS, QUESTIONS, START_OPTIONS } from '@/data/questions';
+import { getUnlockedHiddenQuestions, PROGRESS_OPTIONS, QUESTIONS, START_OPTIONS } from '@/data/questions';
 import { emptyDimensionScores, normalizeDimensionScores } from './dimensions';
 import type { AssessmentInput, Dimension, DimensionScores, TagScores } from './types';
 
@@ -16,10 +16,11 @@ function addTags(target: TagScores, tags: TagScores | undefined): void {
   }
 }
 
-function maxDimensionScores(): DimensionScores {
+function maxDimensionScores(answers: QuizAnswers): DimensionScores {
   const max = emptyDimensionScores();
   max.O = 100;
-  for (const question of QUESTIONS) {
+  const answeredHiddenQuestions = getUnlockedHiddenQuestions(answers).filter((question) => question.options.some((option) => option.id === answers[question.id]));
+  for (const question of [...QUESTIONS, ...answeredHiddenQuestions]) {
     for (const dimension of ['P', 'A', 'C', 'I', 'D', 'S', 'W', 'M', 'F'] as Dimension[]) {
       const questionMax = Math.max(...question.options.map((option) => option.delta[dimension] ?? 0), 0);
       max[dimension] += questionMax;
@@ -38,13 +39,14 @@ export function aggregateAnswers(answers: QuizAnswers): AssessmentInput {
   }
   const start = START_OPTIONS.find((option) => option.id === answers.start);
   if (start) addTags(tags, start.tagDelta);
-  for (const question of QUESTIONS) {
+  const answeredHiddenQuestions = getUnlockedHiddenQuestions(answers).filter((question) => question.options.some((option) => option.id === answers[question.id]));
+  for (const question of [...QUESTIONS, ...answeredHiddenQuestions]) {
     const selected = question.options.find((option) => option.id === answers[question.id]);
     if (!selected) continue;
     addDelta(raw, selected.delta);
     addTags(tags, selected.tagDelta);
   }
-  return { scores: normalizeDimensionScores(raw, maxDimensionScores()), tags };
+  return { scores: normalizeDimensionScores(raw, maxDimensionScores(answers)), tags };
 }
 
 export function feedbackForAnswers(answers: QuizAnswers): string | null {

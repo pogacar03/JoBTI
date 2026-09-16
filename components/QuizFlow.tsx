@@ -2,20 +2,20 @@
 
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { PROGRESS_OPTIONS, QUESTIONS, START_OPTIONS, TOTAL_QUIZ_QUESTIONS } from '@/data/questions';
+import { getUnlockedHiddenQuestions, PROGRESS_OPTIONS, QUESTIONS, START_OPTIONS, TOTAL_QUIZ_QUESTIONS } from '@/data/questions';
 import { feedbackForAnswers, type QuizAnswers } from '@/lib/scoring/answers';
 import { clearQuizState, ensureFeedbackPlan, createEmptyQuizState, isQuizComplete, readQuizState, writeQuizState, type QuizState } from '@/lib/storage';
 import { markFeedbackShown, shouldShowFeedback } from '@/lib/feedback';
 import { ProgressBar } from './ProgressBar';
 import { QuestionCard } from './QuestionCard';
 
-const totalScreens = TOTAL_QUIZ_QUESTIONS + 2;
-
 function firstUnansweredStep(answers: QuizAnswers): number {
   if (!PROGRESS_OPTIONS.some((option) => option.id === answers.q0)) return 0;
   if (!START_OPTIONS.some((option) => option.id === answers.start)) return 1;
   const index = QUESTIONS.findIndex((question) => !question.options.some((option) => option.id === answers[question.id]));
-  return index === -1 ? totalScreens - 1 : index + 2;
+  if (index !== -1) return index + 2;
+  const hiddenIndex = getUnlockedHiddenQuestions(answers).findIndex((question) => !question.options.some((option) => option.id === answers[question.id]));
+  return hiddenIndex === -1 ? QUESTIONS.length + 1 : QUESTIONS.length + hiddenIndex + 2;
 }
 
 function getFallbackFeedback(step: number): string {
@@ -58,8 +58,11 @@ export function QuizFlow() {
   }, [feedback]);
 
   const selectedCount = useMemo(() => Object.keys(state.answers).length, [state.answers]);
+  const hiddenQuestions = useMemo(() => getUnlockedHiddenQuestions(state.answers), [state.answers]);
+  const allQuestions = useMemo(() => [...QUESTIONS, ...hiddenQuestions], [hiddenQuestions]);
+  const totalScreens = allQuestions.length + 2;
   const progressQuestion = Math.max(0, Math.min(TOTAL_QUIZ_QUESTIONS, step - 1));
-  const currentQuestion = step >= 2 ? QUESTIONS[step - 2] : null;
+  const currentQuestion = step >= 2 ? allQuestions[step - 2] : null;
   const currentOptions = step === 0 ? PROGRESS_OPTIONS : step === 1 ? START_OPTIONS : currentQuestion?.options ?? [];
   const selectedId = step === 0 ? state.answers.q0 : step === 1 ? state.answers.start : currentQuestion ? state.answers[currentQuestion.id] : undefined;
 
@@ -108,7 +111,7 @@ export function QuizFlow() {
         <div className="flex items-center gap-4 py-5">
           <button type="button" onClick={goBack} disabled={step === 0} className="inline-flex min-h-10 items-center border border-ink/35 px-3 font-mono text-[10px] uppercase tracking-[.12em] text-ink/65 transition-colors hover:border-ink disabled:cursor-not-allowed disabled:opacity-30 focus:outline-none focus:ring-4 focus:ring-mustard">← 返回</button>
           <div className="flex-1"><ProgressBar current={progressQuestion} total={TOTAL_QUIZ_QUESTIONS} /></div>
-          <span className="min-w-[52px] text-right font-mono text-[11px] font-bold">{step < 2 ? 'Q0' : `${String(progressQuestion).padStart(2, '0')} / 30`}</span>
+          <span className="min-w-[52px] text-right font-mono text-[11px] font-bold">{step < 2 ? 'Q0' : currentQuestion?.hidden ? '支线' : `${String(progressQuestion).padStart(2, '0')} / 30`}</span>
         </div>
 
         {feedback ? <div role="status" aria-live="polite" className="mb-4 border-l-4 border-mustard bg-mint px-4 py-3 font-mono text-xs text-ink reveal-in">{feedback}</div> : null}
@@ -116,7 +119,7 @@ export function QuizFlow() {
         <div className="flex flex-1 items-start py-8 sm:py-12">
           {step === 0 ? <QuestionCard headingRef={questionTitleRef} eyebrow="秋招进度 / Q0" prompt="你现在处于秋招的哪一格？" intro="先让系统知道你的当前战场。没有标准答案，只有不同程度的“还在流程里”。" options={PROGRESS_OPTIONS} selectedId={selectedId} onSelect={(option) => selectAnswer(option.id)} /> : null}
           {step === 1 ? <QuestionCard headingRef={questionTitleRef} eyebrow="开始时间 / Q-START" prompt="你是什么时候开始认真投秋招的？" intro="时间线会影响档案里的迟到指数，但不会影响你的尊严。" options={START_OPTIONS} selectedId={selectedId} onSelect={(option) => selectAnswer(option.id)} /> : null}
-          {step >= 2 && currentQuestion ? <QuestionCard headingRef={questionTitleRef} eyebrow={currentQuestion.eyebrow} prompt={currentQuestion.prompt} options={currentOptions} selectedId={selectedId} onSelect={(option) => selectAnswer(option.id)} /> : null}
+          {step >= 2 && currentQuestion ? <QuestionCard headingRef={questionTitleRef} eyebrow={currentQuestion.eyebrow} prompt={currentQuestion.prompt} intro={currentQuestion.hidden ? '你刚刚的选择触发了一条隐藏记录。它不计入主线进度，但会影响最终鉴定。' : undefined} options={currentOptions} selectedId={selectedId} onSelect={(option) => selectAnswer(option.id)} /> : null}
         </div>
 
         <footer className="border-t border-ink/25 pt-4 font-mono text-[10px] uppercase tracking-[.12em] text-ink/50">

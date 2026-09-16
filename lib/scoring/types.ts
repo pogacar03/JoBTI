@@ -85,6 +85,12 @@ export interface Question {
   prompt: string;
   eyebrow: string;
   options: QuestionOption[];
+  hidden?: boolean;
+}
+
+export interface HiddenQuestion extends Question {
+  hidden: true;
+  unlockWhen: (answers: Record<string, string>) => boolean;
 }
 
 export interface AssessmentInput {
