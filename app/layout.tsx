@@ -8,7 +8,7 @@ import { Analytics } from '@vercel/analytics/react';
 
 export const metadata: Metadata = {
   title: 'JOBTI · 秋招人格测试',
-  description: '30 道题，测测秋招把你变成了什么东西。',
+  description: '30 道题，测测秋招把你变成了什么人格。',
 };
 
 export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {

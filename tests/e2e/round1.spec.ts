@@ -34,6 +34,12 @@ test('core calls to action have visible vermilion contrast', async ({ page }) =>
   await expect(page.getByRole('button', { name: /← 返回/ })).toBeDisabled();
 });
 
+test('home headline describes the result as a personality', async ({ page }) => {
+  await page.goto('/');
+  await expect(page.getByRole('heading', { name: '测测秋招 把你变成了 什么人格。' })).toBeVisible();
+  await expect(page.getByRole('heading', { name: /什么东西/ })).toHaveCount(0);
+});
+
 test('downloaded poster is a non-empty 1080×1920 PNG', async ({ page }) => {
   await seedCompleteState(page);
   const downloadEvent = page.waitForEvent('download');

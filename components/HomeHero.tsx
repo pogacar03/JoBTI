@@ -78,7 +78,7 @@ export function HomeHero({ initialOrder }: HomeHeroProps) {
         <section className="grid flex-1 items-center gap-10 py-12 lg:grid-cols-[1.08fr_.92fr] lg:items-start lg:gap-10 lg:py-6">
           <div className="max-w-xl">
             <div className="stamp stamp-red mb-7">秋招人格鉴定 / report 01</div>
-            <h2 className="text-[clamp(3.4rem,14vw,8.5rem)] font-bold leading-[.87] tracking-[-.1em] text-ink lg:text-[clamp(3.4rem,8vw,6.2rem)]">测测秋招<br /><span className="text-pine">把你变成了</span><br />什么东西<span className="text-vermilion">。</span></h2>
+            <h2 className="text-[clamp(3.4rem,14vw,8.5rem)] font-bold leading-[.87] tracking-[-.1em] text-ink lg:text-[clamp(3.4rem,8vw,6.2rem)]">测测秋招<br /><span className="text-pine">把你变成了</span><br />什么人格<span className="text-vermilion">。</span></h2>
             <p className="mt-7 max-w-md text-base leading-7 text-ink/75 sm:text-lg">投了几百份简历以后，你还是原来的你吗？</p>
             <div className="mt-9 flex flex-col items-start gap-4 sm:flex-row sm:items-center">
               <Link href="/quiz?start=1" onClick={() => clearCompletedQuizState()} className="inline-flex min-h-14 w-full items-center justify-center bg-vermilion px-7 text-sm font-bold text-paper shadow-stamp transition-transform hover:-translate-y-1 focus:outline-none focus:ring-4 focus:ring-mustard sm:w-auto">
