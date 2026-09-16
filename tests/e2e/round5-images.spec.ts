@@ -131,8 +131,17 @@ test('downloaded poster keeps its fixed dimensions and includes the primary imag
   await page.goto('/result');
   await expect(page.getByText('检测完成')).toBeVisible({ timeout: 5000 });
   await page.getByRole('button', { name: /查看我的 JOBTI/ }).click();
-  await expect(page.locator('[data-poster-primary-image]')).toHaveAttribute('src', '/personalities/pool.jpg');
+  const poster = page.locator('[data-share-poster]');
+  const posterImage = page.locator('[data-poster-primary-image]');
+  await expect(posterImage).toHaveAttribute('src', '/personalities/pool.jpg');
+  expect((await posterImage.boundingBox())?.width).toBeGreaterThanOrEqual(430);
   await expect(page.locator('[data-poster-qr-image]')).toHaveAttribute('src', /^data:image\/png;base64,/);
+  await expect(page.locator('[data-poster-qr-image]')).toHaveAttribute('data-poster-qr-target', 'https://qiuzhao.site');
+  await expect(poster).toContainText('来 qiuzhao.site 测测你的秋招人格');
+  await expect(poster).toContainText('测测秋招把你变成了什么人格');
+  await expect(poster).not.toContainText('秋招把你变成了什么东西');
+  await expect(poster).not.toContainText('一句话诊断');
+  expect((await poster.innerText()).split('自己泡在池子里').length - 1).toBe(1);
   await expect(page.getByText('你是一个什么样的人', { exact: true }).first()).toBeVisible();
   const download = page.waitForEvent('download');
   await page.getByRole('button', { name: /保存人格卡/ }).click();

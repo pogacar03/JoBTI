@@ -54,7 +54,7 @@ vectorSimilarity × 0.70 + tagMatch × 0.30 + bonus
 
 ## 分享海报
 
-结果页使用 React DOM 生成固定 1080×1920（9:16）档案海报，再由 `html-to-image` 转为 PNG。二维码默认指向当前访问域名，也可通过 `NEXT_PUBLIC_SITE_URL` 指定正式域名。分享按钮包括保存人格卡、复制文案和重新测试。
+结果页使用 React DOM 生成固定 1080×1920（9:16）档案海报，再由 `html-to-image` 转为 PNG。二维码固定指向正式站点 `https://qiuzhao.site`；海报以人物图、精简人格描述和独立的毒舌鉴定为主。分享按钮包括保存人格卡、复制文案和重新测试。
 
 ## 人格图片
 
