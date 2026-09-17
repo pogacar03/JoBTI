@@ -71,7 +71,7 @@ export function HomeHero({ initialOrder }: HomeHeroProps) {
             <h1 className="mt-2 text-3xl font-bold tracking-[-.08em] sm:text-4xl">JOBTI<span className="text-vermilion">.</span></h1>
           </div>
           <div className="flex items-start gap-3 text-right font-mono text-[10px] uppercase leading-5 text-ink/60">
-            <Link data-gallery-link href="/gallery" className="text-vermilion underline underline-offset-2 focus:outline-none focus:ring-4 focus:ring-mustard">人物图鉴</Link>
+            <Link data-gallery-link href="/gallery" className="inline-flex min-h-7 min-w-16 shrink-0 items-center justify-center border border-vermilion bg-paper px-2 text-center text-[9px] font-bold tracking-normal text-vermilion shadow-[2px_2px_0_0_currentColor] focus:outline-none focus:ring-4 focus:ring-mustard">人物图鉴 ↗</Link>
             <div><div>confidential</div><div>case no. 27-0915</div></div>
           </div>
         </header>

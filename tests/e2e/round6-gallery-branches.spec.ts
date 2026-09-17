@@ -7,6 +7,15 @@ test('personality gallery exposes the character archive', async ({ page }) => {
   await expect(page.locator('[data-gallery-card="HUMN"] img')).toBeVisible();
 });
 
+test('gallery artwork fills the shared card frame', async ({ page }) => {
+  await page.goto('/gallery');
+  for (const code of ['BARG', 'POOL']) {
+    const image = page.locator(`[data-gallery-card="${code}"] img`);
+    await expect(image).toBeVisible();
+    expect(await image.evaluate((element) => getComputedStyle(element).objectFit)).toBe('cover');
+  }
+});
+
 test('a qualifying answer pattern reveals a hidden branch after the mainline', async ({ page }) => {
   await page.goto('/quiz');
   await page.evaluate(() => {

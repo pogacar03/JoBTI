@@ -48,6 +48,16 @@ test('mobile homepage fits the primary intake view without vertical scrolling', 
   expect(await page.evaluate(() => document.documentElement.scrollHeight)).toBeLessThanOrEqual(846);
 });
 
+test('homepage exposes the character gallery as a visible action', async ({ page }) => {
+  await page.setViewportSize({ width: 390, height: 844 });
+  await page.goto('/');
+  const galleryLink = page.locator('[data-gallery-link]');
+  await expect(galleryLink).toBeVisible();
+  const box = await galleryLink.boundingBox();
+  expect(box?.height ?? 0).toBeGreaterThanOrEqual(24);
+  expect(box?.width ?? 0).toBeGreaterThanOrEqual(64);
+});
+
 test('downloaded poster is a non-empty 1080×1920 PNG', async ({ page }) => {
   await seedCompleteState(page);
   const downloadEvent = page.waitForEvent('download');

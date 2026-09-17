@@ -21,7 +21,7 @@ export default function GalleryPage() {
           {PERSONALITIES.map((personality) => (
             <article key={personality.code} data-gallery-card={personality.code} className="border-2 border-ink bg-paper p-3 shadow-file transition-transform hover:-translate-y-1 sm:p-4">
               <div className="relative aspect-[4/5] overflow-hidden border border-ink/20 bg-ink/5">
-                <Image src={getPersonalityImage(personality.code)} alt={`${personality.code} ${personality.name} 人物图`} fill sizes="(max-width: 640px) 50vw, (max-width: 1280px) 25vw, 220px" className="object-contain object-center" unoptimized />
+                <Image src={getPersonalityImage(personality.code)} alt={`${personality.code} ${personality.name} 人物图`} fill sizes="(max-width: 640px) 50vw, (max-width: 1280px) 25vw, 220px" className="object-cover object-center" unoptimized />
                 <span className="absolute left-2 top-2 bg-mustard px-2 py-1 font-mono text-[9px] font-bold uppercase shadow-stamp">{personality.rarity}</span>
               </div>
               <div className="pt-4">
