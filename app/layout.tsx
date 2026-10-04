@@ -4,7 +4,6 @@ import '@fontsource/space-grotesk/700.css';
 import '@fontsource/ibm-plex-mono/400.css';
 import './globals.css';
 import type { Metadata } from 'next';
-import { Analytics } from '@vercel/analytics/react';
 
 export const metadata: Metadata = {
   metadataBase: new URL('https://qiuzhao.site'),
@@ -30,7 +29,7 @@ export const metadata: Metadata = {
 export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
   return (
     <html lang="zh-CN">
-      <body>{children}<Analytics /></body>
+      <body>{children}</body>
     </html>
   );
 }
