@@ -16,6 +16,36 @@ test('gallery artwork fills the shared card frame', async ({ page }) => {
   }
 });
 
+test('LATE artwork has a visible sign-off inside its gallery frame', async ({ page }) => {
+  await page.goto('/gallery');
+  const card = page.locator('[data-gallery-card="LATE"]');
+  await expect(card.locator('[data-gallery-art-caption]')).toBeVisible();
+  const image = card.locator('img');
+  expect(await image.evaluate((element) => getComputedStyle(element).objectFit)).toBe('contain');
+});
+
+test('pages expose the JOBTI tab icon', async ({ page }) => {
+  await page.goto('/gallery');
+  const icon = page.locator('link[rel="icon"]');
+  await expect(icon).toHaveAttribute('href', /icon\.svg/);
+  const href = await icon.getAttribute('href');
+  const response = await page.request.get(href!);
+  expect(response.ok()).toBe(true);
+  expect(await response.text()).toContain('<svg');
+});
+
+test('mobile gallery lets visitors scan the archive and inspect a full character', async ({ page }) => {
+  await page.setViewportSize({ width: 390, height: 844 });
+  await page.goto('/gallery');
+  expect(await page.evaluate(() => document.documentElement.scrollHeight)).toBeLessThan(7000);
+  await page.getByRole('button', { name: /查看 LATE 秋招迟到生/ }).click();
+  const detail = page.getByRole('dialog', { name: /秋招迟到生/ });
+  await expect(detail).toBeVisible();
+  await expect(detail.getByRole('img', { name: /LATE 秋招迟到生/ })).toBeVisible();
+  await page.keyboard.press('Escape');
+  await expect(detail).toBeHidden();
+});
+
 test('a qualifying answer pattern reveals a hidden branch after the mainline', async ({ page }) => {
   await page.goto('/quiz');
   await page.evaluate(() => {

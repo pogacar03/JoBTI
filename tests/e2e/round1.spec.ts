@@ -48,6 +48,17 @@ test('mobile homepage fits the primary intake view without vertical scrolling', 
   expect(await page.evaluate(() => document.documentElement.scrollHeight)).toBeLessThanOrEqual(846);
 });
 
+test('narrow phone keeps the headline readable and the primary action full width', async ({ page }) => {
+  await page.setViewportSize({ width: 320, height: 640 });
+  await page.goto('/');
+  const heading = page.getByRole('heading', { name: '测测秋招 把你变成了 什么人格。' });
+  const headingBox = await heading.boundingBox();
+  const buttonBox = await page.getByRole('link', { name: /开始秋招精神鉴定/ }).boundingBox();
+  expect(headingBox?.height ?? Infinity).toBeLessThanOrEqual(125);
+  expect(buttonBox?.width ?? 0).toBeGreaterThanOrEqual(240);
+  expect(await page.evaluate(() => document.documentElement.scrollHeight)).toBeLessThanOrEqual(642);
+});
+
 test('homepage exposes the character gallery as a visible action', async ({ page }) => {
   await page.setViewportSize({ width: 390, height: 844 });
   await page.goto('/');
@@ -56,6 +67,16 @@ test('homepage exposes the character gallery as a visible action', async ({ page
   const box = await galleryLink.boundingBox();
   expect(box?.height ?? 0).toBeGreaterThanOrEqual(24);
   expect(box?.width ?? 0).toBeGreaterThanOrEqual(64);
+});
+
+test('shared site link has a branded social preview image', async ({ page }) => {
+  await page.goto('/');
+  const imageUrl = await page.locator('meta[property="og:image"]').getAttribute('content');
+  expect(imageUrl).toMatch(/^https:\/\/qiuzhao\.site\/og-card\.png$/);
+  await expect(page.locator('meta[name="twitter:card"]')).toHaveAttribute('content', 'summary_large_image');
+  const response = await page.request.get(new URL(imageUrl!).pathname);
+  expect(response.ok()).toBe(true);
+  expect(response.headers()['content-type']).toMatch(/image\/png/);
 });
 
 test('downloaded poster is a non-empty 1080×1920 PNG', async ({ page }) => {
@@ -87,6 +108,22 @@ test('desktop view keeps CTA inside common first-screen heights', async ({ page 
     expect(box).not.toBeNull();
     expect((box?.y ?? Infinity) + (box?.height ?? Infinity)).toBeLessThanOrEqual(viewport.height);
   }
+});
+
+test('desktop hero fits the artwork and footer in the first screen', async ({ page }) => {
+  await page.setViewportSize({ width: 1440, height: 900 });
+  await page.goto('/');
+  await expect(page.locator('[data-personality-image]')).toBeVisible();
+  expect(await page.evaluate(() => document.documentElement.scrollHeight)).toBeLessThanOrEqual(902);
+});
+
+test('result offers a visible mobile share action as soon as the report opens', async ({ page }) => {
+  await page.setViewportSize({ width: 390, height: 844 });
+  await seedCompleteState(page);
+  const button = page.getByRole('button', { name: '保存分享图' });
+  await expect(button).toBeVisible();
+  const box = await button.boundingBox();
+  expect((box?.y ?? Infinity) + (box?.height ?? Infinity)).toBeLessThanOrEqual(844);
 });
 
 test('keyboard answer advance focuses and announces the new question', async ({ page }) => {

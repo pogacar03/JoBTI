@@ -1,7 +1,20 @@
-import Image from 'next/image';
 import Link from 'next/link';
-import { PERSONALITIES } from '@/data/personalities';
-import { getPersonalityImage } from '@/lib/personality-images';
+import type { Metadata } from 'next';
+import { GalleryCollection } from '@/components/GalleryCollection';
+
+export const metadata: Metadata = {
+  title: '人物图鉴 · JOBTI',
+  description: '浏览 24 种秋招人格人物档案，看看你会是哪一种。',
+  openGraph: {
+    type: 'website',
+    locale: 'zh_CN',
+    siteName: 'JOBTI',
+    url: 'https://qiuzhao.site/gallery',
+    title: 'JOBTI 人物图鉴 · 24 种秋招人格',
+    description: '24 种秋招人格人物档案，看看你会是哪一种。',
+    images: [{ url: 'https://qiuzhao.site/og-card.png', width: 1200, height: 630, alt: 'JOBTI 秋招人格测试人物档案' }],
+  },
+};
 
 export default function GalleryPage() {
   return (
@@ -17,21 +30,7 @@ export default function GalleryPage() {
           <Link href="/quiz?start=1" className="inline-flex min-h-11 items-center justify-center bg-vermilion px-5 text-sm font-bold text-paper shadow-stamp focus:outline-none focus:ring-4 focus:ring-mustard">开始鉴定 ↗</Link>
         </header>
 
-        <section className="grid gap-5 py-8 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4" aria-label="人格角色列表">
-          {PERSONALITIES.map((personality) => (
-            <article key={personality.code} data-gallery-card={personality.code} className="border-2 border-ink bg-paper p-3 shadow-file transition-transform hover:-translate-y-1 sm:p-4">
-              <div className="relative aspect-[4/5] overflow-hidden border border-ink/20 bg-ink/5">
-                <Image src={getPersonalityImage(personality.code)} alt={`${personality.code} ${personality.name} 人物图`} fill sizes="(max-width: 640px) 50vw, (max-width: 1280px) 25vw, 220px" className="object-cover object-center" unoptimized />
-                <span className="absolute left-2 top-2 bg-mustard px-2 py-1 font-mono text-[9px] font-bold uppercase shadow-stamp">{personality.rarity}</span>
-              </div>
-              <div className="pt-4">
-                <div className="flex items-center justify-between gap-3 font-mono text-[10px] uppercase tracking-[.16em] text-vermilion"><span>{personality.code}</span><span>{personality.family.replace('_', ' ')}</span></div>
-                <h2 className="mt-2 text-xl font-bold tracking-[-.05em]">{personality.name}</h2>
-                <p className="mt-2 border-l-2 border-vermilion pl-3 text-sm leading-6 text-ink/75">“{personality.tagline}”</p>
-              </div>
-            </article>
-          ))}
-        </section>
+        <GalleryCollection />
 
         <footer className="border-t border-ink/25 pt-5 font-mono text-[10px] uppercase tracking-[.12em] text-ink/50">JOBTI · character archive · not a psychological diagnosis</footer>
       </div>

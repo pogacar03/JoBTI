@@ -5,6 +5,7 @@ coverage/
 playwright-report/
 test-results/
 *.png
+!public/og-card.png
 *.tsbuildinfo
 .DS_Store
 .vercel
